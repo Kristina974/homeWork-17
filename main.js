@@ -1,55 +1,78 @@
  'use strict';
+ 
+class Hamburger {
+    constructor(...args) {
+        this.arr = args;
+    };
 
-// 1) Написать функцию, которая на вход принимает строку, возвращает массив чисел, 
-// которые являются граничными, то есть не внутри текста.
-// Пример работы:
-// "привет 12 ываыва34 98 3423ыавыа" -> [12, 98]
-// "10 ываыв 8 234ы" -> [10, 8]
+    static SIZE_SMALL = {
+        price: 50,
+        calories: 20
+    };
 
-function treatmentStr(str) {
-  let digitsArray = [];
-  const myRegExp = str.match(/^\d+|([\s]+[\d+]+[\s]|\d+$)/g);
-  myRegExp.forEach(digit => {
-    digitsArray.push(digit.replace(/\s/g, ""));
-  })
-  return digitsArray;
-}
+    static SIZE_BIG = {
+        price: 100,
+        calories: 40
+    };
 
-let firstTest = treatmentStr('привет 12 ываыва34 98 3423ыавыа'); 
-let secondTest = treatmentStr('10 ываыв 8 234ы'); 
+    static STUFFING_CHEESE = {
+        price: 10,
+        calories: 20
+    };
 
-console.log(firstTest);
-console.log(secondTest);
+    static STUFFING_SALATE = {
+        price: 20,
+        calories: 5
+    };
 
-// 2) Написать функцию для валидации api v4 адреса и описать как она работает,
-// что делает конкретный символ на конкретной позиции регулярного выражения
-// Пример работы
-// "127.0.0.0" -> true
-// "127.0.155.10" -> true
-// "127.0т155.10" -> false
+    static STUFFING_POTATOES = {
+        price: 15,
+        calories: 10
+    };
 
-function validation(input,api) { 
-  return input.test(api);
-}
+    static TOPPING_SAUCE = {
+        price: 15,
+        calories: 0
+    };
 
-let thirdTest = validation(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, '127.0.0.0'); 
-let fourthTest = validation(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, '127.0.155.10'); 
-let fifthTest = validation(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, '127.0т155.10');
-let sixthTest = validation(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, '999.999.01.009'); 
+    static TOPPING_MAYO = {
+        price: 20,
+        calories: 5
+    };
 
-console.log(thirdTest, fourthTest, fifthTest, sixthTest);
+    addTopping(...args) {
+        args.forEach((item) => {
+            this.arr.push(item);
+        });
+    };
 
-// \b(...)\b     - границы слова
-// . - символ точки.экранируется
-// (?:(...)\.)   - Означает "ноль или один"
-// ?:25[0-5]     - необязательное условие, если первые две цифры 2 и 5, третья должна быть в диапазоне от 0 до 5 (если нет совпадение = 0)
-// 2[0-4][0-9]   - условие, если первая цифра 2, вторая от 0 до 4, третья от 0 до 9
-// [0-5] - диапазон цифр от 0 до 5
-// 2[0-4][0-9]|[01]  - символ "|" означает "или"
-// выполнится либо 2[0-4][0-9] или одно число из диапазона [0-1]
-// (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)
-// {3} - квантификатор = 3; указывает кол-во чисел равных диапазону [...]
-// работает с условием: "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
-// /g - поиск ищет все совпадения, без него – только первое
+    calculatePrice() {
+        return this.arr.reduce((sum, curr) => {
+           return sum + curr.price;
+        }, 0)
+    };
 
+    calculateCalories() {
+        return this.arr.reduce((sum, curr) => {
+            return sum + curr.calories;
+        }, 0)
+    };
+};
 
+// маленький гамбургер с начинкой из сыра
+const hamburger = new Hamburger(Hamburger.SIZE_SMALL, Hamburger.STUFFING_CHEESE);
+
+// добавка из майонеза
+hamburger.addTopping(Hamburger.TOPPING_MAYO);
+
+// спросим сколько там калорий
+console.log('Calories: ' + hamburger.calculateCalories());
+
+// сколько стоит
+console.log('Price: ' + hamburger.calculatePrice());
+
+// я тут передумал и решил добавить еще приправу
+hamburger.addTopping(Hamburger.TOPPING_SAUCE);
+
+// А сколько теперь стоит?
+console.log('Price with sauce: ' + hamburger.calculatePrice());
